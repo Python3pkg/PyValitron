@@ -81,21 +81,21 @@ class Form(object):
         # Validate current inputs value
         status = True
 
-        for current_input, validation_rule in self._inputs.items():
+        for current_input, validation_rule in list(self._inputs.items()):
             # Push input value to validator
             self._validator.set_input(self._inputs[current_input]['value'])
             if 'validate' in validation_rule:
                 self._errors[current_input] = []
-                for rule_name, rule_args in validation_rule['validate'].items():
+                for rule_name, rule_args in list(validation_rule['validate'].items()):
                     self._update_validator(rule_name)
                     # Check if param exist and pass them to the method
-                    if 'param' in rule_args.keys() and len(rule_args['param']) > 0:
+                    if 'param' in list(rule_args.keys()) and len(rule_args['param']) > 0:
                         current_status = getattr(self._validator, rule_name)(*rule_args['param'])
                     else:
                         current_status = getattr(self._validator, rule_name)()
                     self._inputs[current_input]['status'] = current_status
                     status &= current_status
-                    if not current_status and 'error' in rule_args.keys():
+                    if not current_status and 'error' in list(rule_args.keys()):
                         self._errors[current_input].append(rule_args['error'])
 
         # Set and return Overall status
@@ -107,15 +107,15 @@ class Form(object):
 
         # Sanitize current input value
         status = True
-        for current_input, sanitization_rule in self._inputs.items():
+        for current_input, sanitization_rule in list(self._inputs.items()):
             # Push input value to sanitizer
             self._sanitizer.set_input(self._inputs[current_input]['value'])
             self._sanitizer.set_sinput(None)
             if 'sanitize' in sanitization_rule:
-                for rule_name, rule_args in sanitization_rule['sanitize'].items():
+                for rule_name, rule_args in list(sanitization_rule['sanitize'].items()):
                     self._update_sanitizer(rule_name)
                     # Check if param provided and pass them to the method
-                    if 'param' in rule_args.keys() and len(rule_args['param']) > 0:
+                    if 'param' in list(rule_args.keys()) and len(rule_args['param']) > 0:
                         sanitized_value = getattr(self._sanitizer, rule_name)(*rule_args['param'])
                     else:
                         sanitized_value = getattr(self._sanitizer, rule_name)()
